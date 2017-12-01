@@ -17,11 +17,13 @@ var down=[83,40];
 var ballCoords;
 var ballSpeed=5;
 var ballAngle; //angle from +x axis
-var ballVelocity=[3,3];
+var ballVelocity;
+var ballAcceleration=10;
 var angleDisplay;
 var scoreDisplay;
 var scores=[0,0];
 var fps=60;
+var serve=Math.random()<0.5;
 
 function keyDown (x) {
 	var key=x.keyCode;
@@ -51,20 +53,24 @@ function frame() {
 	if (ballCoords[0]+ballVelocity[0]+ballDiameter>=canvasWidth-paddleWidth) { //to the right
 		if (ballCoords[1]<paddleLocations[1]+paddleHeight && ballCoords[1]>paddleLocations[1]-ballDiameter) {
 			ballVelocity[0]*=-1;
-			ballVelocity[1]+=[2*(ballDiameter/2+ballCoords[1]-paddleLocations[1])/paddleHeight-1]*3
+			ballVelocity[1]+=[2*(ballDiameter/2+ballCoords[1]-paddleLocations[1])/paddleHeight-1]*ballAcceleration;
 			//console.log(ballVelocity[1]);
 		} else {
+			serve=0;			
 			scores[0]++;
-			reset();
+			ballVelocity=[0,0];
+			setTimeout(reset,1000);
 		}
 	} else if (ballCoords[0]+ballVelocity[0]<=paddleWidth) {//to the left
 		if (ballCoords[1]<paddleLocations[0]+paddleHeight && ballCoords[1]+ballDiameter>paddleLocations[0]) {
 			ballVelocity[0]*=-1;
-			ballVelocity[1]+=[2*(ballDiameter/2+ballCoords[1]-paddleLocations[0])/paddleHeight-1]*3
+			ballVelocity[1]+=[2*(ballDiameter/2+ballCoords[1]-paddleLocations[0])/paddleHeight-1]*ballAcceleration;
 			//console.log(ballVelocity[1]);
 		} else {
+			serve=1;
 			scores[1]++;
-			reset();
+			ballVelocity=[0,0];
+			setTimeout(reset,1000);
 		}
 	}
 	ballCoords[0]+=ballVelocity[0];
@@ -86,7 +92,7 @@ function frame() {
 }
 function reset() {
 	ballCoords=[(canvasWidth-ballDiameter)/2,(canvasHeight-ballDiameter)/2];
-	ballVelocity=[3,3];
+	ballVelocity=[5*(2*serve-1),5];
 	scoreDisplay.value=scores[0]+" : "+scores[1];
 }
 function init () {
